@@ -2,7 +2,7 @@
 修論のため、使うWeb実験
 採用の方はこちらを最初に勧めます。
 
-##　なぜ作ったのか
+## なぜ作ったのか
 このプロジェクトは
 [A computational and neural model of momentary subjective well-being](https://www.pnas.org/content/111/33/12252)
 を追試するため、作られました。
@@ -11,7 +11,7 @@
 >jsPsychとは，ウェブブラウザー（Microsoft Edge,Google Chrome,Safariなど）上で行動実験を行うためのJavaScriptライブラリーです。そもそもJavaScriptを上手く使えば，ウェブブラウザーで動作する行動実験課題は作成できます。しかし，全て一から作っていると大変です。そこで，jsPsychのライブラリーを活用することで，より楽に実験課題を作成することができます。
 [from](https://kunisatolab.github.io/main/how-to-jspsych1.html)
 
-##　出来上がりはどんな感じ
+## 出来上がりはどんな感じ
 画面の左と右に数字が出ます。　安定な収入にするのか、不安定でチャレンジがある収入にするのか参加者に選択してもらう
 そして選択の途中で今の気持ちが聞かれる
 プログラムは参加者の選択と気持ちを記録する
