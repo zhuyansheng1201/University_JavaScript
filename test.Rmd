@@ -1,0 +1,548 @@
+---
+title: "150"
+author: "Your name"
+output:
+  html_document:
+    mathjax: null
+    highlight: null
+    theme: null
+    css: jspsych-6.1.0/css/jspsych.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+library(htmltools)
+tagList(
+tags$body(bgcolor="#000000", text="#ffffff"),
+tags$script(src='jspsych-6.1.0/jspsych.js'),
+tags$script(src='jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js'),
+tags$script(src='jspsych-6.1.0/plugins/jspsych-html-button-response.js'),
+tags$script(src='jspsych-6.1.0/plugins/jspsych-html-slider-response.js'),
+tags$script(src='jspsych-6.1.0/plugins/jspsych-fullscreen.js')
+
+)
+```
+
+```{r,results="asis"}
+# shigeki_01-3----
+kakeru1 <-c(0.2,0.3,0.4,0.52,0.66,0.82,1.1,1.2,1.5,2)
+kakeru2 <-c(1.68,1.82,2.2,2.22,2.48,2.8,3.16,3.6,4.2,5)
+kihon1 <- c(30,50,80,110,150)
+kihon2 <- c(20,30,40,50,60)
+shigeki_01 <- NULL
+shigeki_02 <- NULL
+shigeki_03 <- NULL
+for( i in 1:5){ 
+    shigeki_01 <- c(shigeki_01,rep(0,10))
+    shigeki_02 <- c(shigeki_02,kihon1[i]*kakeru1)
+    shigeki_03 <- c(shigeki_03,-kihon1[i]*kakeru1)
+    shigeki_01 <- c(shigeki_01,rep(kihon2[i],10))
+    shigeki_02 <- c(shigeki_02,kihon2[i]*kakeru2)
+    shigeki_03 <- c(shigeki_03,rep(0,10))
+    shigeki_01 <- c(shigeki_01,-rep(kihon2[i],10))
+    shigeki_02 <- c(shigeki_02,rep(0,10))
+    shigeki_03 <- c(shigeki_03,-kihon2[i]*kakeru2)
+    }
+
+
+
+
+# shigeki_01-3シャフルする ----
+chosetimes = length(shigeki_01)
+shigeki_risuto <- rep(1:chosetimes)
+shigeki_risuto_shuffle <- sample(shigeki_risuto,length(shigeki_risuto)) 
+
+shigeki_01_shuffle <-shigeki_01[shigeki_risuto_shuffle]
+shigeki_02_shuffle <-shigeki_02[shigeki_risuto_shuffle]
+shigeki_03_shuffle <-shigeki_03[shigeki_risuto_shuffle]
+
+# フィードバックための数例,名前をfeedback01/2と変える
+feedback01 <- shigeki_02_shuffle
+feedback02 <- shigeki_03_shuffle
+
+# 報酬:罰リスト ----
+reward_s01 <- NULL
+reward_s02 <- NULL
+
+# 1:1=報酬:罰
+reward11 <- rep(c(1,0),chosetimes/2)
+# 1:1=報酬:罰をシャッフル
+reward11_shuffle <- sample(reward11,length(reward11)) 
+
+#ギャンブルしない時のリスト
+reward_s01 <- c(shigeki_01_shuffle)
+
+#ギャンブル時の報酬:罰リストを作った
+for( i in 1:chosetimes){ 
+ 
+     if(reward11_shuffle[i] > 0){
+     reward_s02 <- c(reward_s02,shigeki_02_shuffle[i])
+   }else{
+     reward_s02 <- c(reward_s02,shigeki_03_shuffle[i])
+   }
+   
+  }
+
+
+#listx、作った内容を400行あたりのvar qlistシリーズにいれています ----
+surei <- rep(c(2,3),c(39,24))
+surei01 <- sample(surei, length(surei), replace = FALSE)
+listx <- NULL
+surei_2 <- c(2,0)
+surei_3 <- c(3,0)
+
+for(i in 1:length(surei)){
+
+  if(surei01[i] == 2 ){
+    listx <- c(listx ,surei_2)
+  
+  } else {
+    listx <- c(listx ,surei_3)
+  }
+}
+length(listx)
+
+myrand <- function(x) {
+  y <- c();  i <- 1
+  while (i <= x) {
+    u <- runif(1);  v <- floor(rgamma(1,6,1)); 
+    if (  v >= 3 && v <= 11 ){
+      y <- c(y,v);     i <- i+1
+    }else{
+      y <- y;
+    }
+  }
+  return(y);
+}
+listcross <- myrand(150)
+
+#  刺激リストの作成(HTML用に調整)　　----
+
+fontsize = 45
+mojiiro = "whilt"
+#数字 s1の設定
+top_s1 = 42
+left_s1 <- 28
+number_s1 = shigeki_01_shuffle
+
+#数字 s2の設定
+top_s2 = 31
+left_s2 <- 27
+number_s2 = shigeki_02_shuffle
+
+#数字 s3の設定
+top_s3 = 53
+left_s3 <- 27
+number_s3 = shigeki_03_shuffle
+
+#白い背景
+# 左
+top_bottom_s1 = "top"
+top_bottom_position_s1 = 38
+image_path_s1 = "img/s2.bmp"
+image_width_s1 = 200
+left_right_position_s1 <- 25
+
+# 右1
+top_bottom_s2 = "top"
+top_bottom_position_s2 = 27
+image_path_s2 = "img/s2.bmp"
+image_width_s2 = 200
+left_right_position_s2 <- 25
+
+
+# 右2
+top_bottom_s3 = "top"
+top_bottom_position_s3 = 48
+image_path_s3 = "img/s2.bmp"
+image_width_s3 = 200
+left_right_position_s3 <- 25
+
+
+
+#　HTML用に調整　
+stimulus <- paste("[\"<p style='position: absolute; ",
+                       "top",": ",
+                       top_bottom_position_s1,"%;",
+                       "left",": ",
+                       left_right_position_s1,"%'><img src='",
+                       image_path_s1,"' width='",
+                       image_width_s1,"px'/></p>\",",
+                       "\"<p style='position: absolute; ",
+                       "top",": ",
+                       top_s1,"%;",
+                       "left",": ",
+                       left_s1,"%;",
+                       "color",": ",
+                       mojiiro,";",
+                       "font-size",": ",
+                       fontsize,"pt;'>",
+                       "￥",number_s1,"</p>\",",
+                       "\"<p style='position: absolute; ",
+                       "top",": ",
+                       top_bottom_position_s2,"%;",
+                       "right",": ",
+                       left_right_position_s2,"%'><img src='",
+                       image_path_s2,"' width='",
+                       image_width_s2,"px'/></p>\",",
+                  
+                       "\"<p style='position: absolute; ",
+                       "top",": ",
+                       top_bottom_position_s3,"%;",
+                       "right",": ",
+                       left_right_position_s3,"%'><img src='",
+                       image_path_s3,"' width='",
+                       image_width_s3,"px'/></p>\",",
+                   
+                       "\"<p style='position: absolute; ",
+                       "top",": ",
+                       top_s2,"%;",
+                       "right",": ",
+                       left_s2,"%;",
+                       "color",": ",
+                       mojiiro,";",
+                       "font-size",": ",
+                       fontsize,"pt;'>",
+                       "￥",number_s2,"</p>\",",
+                       "\"<p style='position: absolute; ",
+                       "top",": ",
+                       top_s3,"%;",
+                       "right",": ",
+                       left_s3,"%;",
+                       "color",": ",
+                       mojiiro,";",
+                       "font-size",": ",
+                       fontsize,"pt;'>",
+                       "￥",number_s3,"</p>\",",
+                      "\"<p style='position: absolute;position: absolute; top:44.1%;left: 49.11%;font-size: 48px;'>+",
+                      "</p>\"]",sep="")
+
+
+
+
+
+
+# 上記で作ったものをデータフレーム化しておくなど！！（とても重要）----
+RL_stim_0 <- data.frame(stimulus,
+                      reward_s01,
+                      reward_s02,
+                      feedback01,
+                      feedback02,
+                      listcross
+                      )
+# どういう刺激リストを作成したのかの情報も残しておく
+write.csv(RL_stim_0,"RL_stim_0.csv")
+
+# 上記で作ったデータフレームをJson形式で出力する
+for (i in 1:nrow(RL_stim_0)) {
+  if(i==1){cat("<script>", "var stimuli = [")}
+  cat("{stimulus:",as.character(RL_stim_0$stimulus[i]),",
+      data:{reward_s01:",RL_stim_0$reward_s01[i],
+      ", reward_s02:",RL_stim_0$reward_s02[i],
+      ", feedback01:",RL_stim_0$feedback01[i],
+      ", feedback02:",RL_stim_0$feedback02[i],
+      ", listcross:",RL_stim_0$listcross[i],"}}")
+  if(i==nrow(RL_stim_0)){
+    cat("]; </script>")
+  }else{
+    cat(",")
+  }
+}
+
+for (i in 1:150) {
+  if(i==1){cat("<script>", "var listcross = [")}
+  cat(listcross[i])
+  if(i==nrow(RL_stim_0)){
+    cat("]; </script>")
+  }else{
+    cat(",")
+  }
+}
+
+```
+
+
+```{js}
+/*提示時間の倍率、本番は1に設定する*/
+var bai = 0.001 ;
+/* 全画面表示化 */
+var fullscreen = {
+  type: 'fullscreen',
+  message: '<p>以下のボタンをクリックすると，画面は全画面表示に切り替わります。全画面表示を止めたい場合はEscキーを押してください。</p>',
+  button_label: "全画面表示に切り替え",
+  fullscreen_mode: true
+};
+
+/* 教示文 */
+var instructions00 = {
+     timeline:[{ 
+      type: 'html-keyboard-response',
+      stimulus:"<p style='text-align:left'>今日は実験に協力していただきありがとうございます</p>"+
+               "<p style='text-align:left'>実験に入る前に、最近一週間の気分を教えてください</p>"+
+               "<p style='text-align:left'>次に進むには、スペースキーを押してください</p>",
+       post_trial_gap:1000
+     },{
+      type: 'html-slider-response',
+      stimulus:'<p>今どれくらい楽しいかを教えてください</p>',
+      labels: ['とても楽しくない','とても楽しい'] ,
+      trial_duration: 10000,
+      button_label: '確定',
+     },{
+    　type: 'html-keyboard-response',
+      stimulus: '<p style="font-size: 48px">+</p>',
+      trial_duration: 2000,
+      response_ends_trial: false,
+     }]
+};
+var instructions = {
+  type: "html-keyboard-response",
+  stimulus: "<p style='text-align:left'>私たちは皆、報酬の見方が異なり、リスクを冒すことをいとわない人もいます</p>"+
+   "<p style='text-align:left'>できるだけ多くのお金をもらうように頑張ってください</p>"+
+   "<p style='text-align:left'>　</p>"+
+   "<p style='text-align:left'>次に進むには、スペースキーを押してください</p>",
+    post_trial_gap:1000
+};
+var instructions01 = {
+  type: "html-keyboard-response",
+  stimulus: 
+   "<p style='text-align:left'>左を選択するとの書かれた金額がもらいます</p>"+
+   "<p style='text-align:left'> </p>"+
+   "<p style='text-align:left'>右を選択すると半分半分の確率で、上か下かどちらの金額がもらいます</p>"+
+   "<p style='text-align:left'>※※３秒内に選択しないと、一番悪い結果になります※※</p>"+
+   "<p style='text-align:left'>　</p>"+
+   "<p style='text-align:left'>ゲームの途中で今の気持ちが聞かれます</p>"+
+   "<p style='text-align:left'>※※４秒内に棒をいじって、確定ボタンを押してください※※</p>"+
+   "<p style='text-align:left'>本番に入る前に、練習をやってもらいます、準備がてきたらスペースキーを押してください</p>",
+    post_trial_gap:1000
+};
+var instructions02 = {
+  type: "html-keyboard-response",
+  stimulus: "<p style='text-align:left'>練習が終わりました</p>"+
+   "<p style='text-align:left'>これから本番に入ります、準備がてきたらスペースキーを押してください</p>",
+    post_trial_gap:1000
+};
+var instructions03 ={
+   timeline: [{
+  type: "html-keyboard-response",
+  stimulus: "<p style='text-align:left'>今から5分休憩に入ります</p>"+
+   "<p style='text-align:left'>休憩がいらないならスペースキーを押してください</p>",
+    trial_duration:300000
+},{
+  type: "html-keyboard-response",
+  stimulus: "<p style='text-align:left'>5秒内に実験に入ります</p>",
+    trial_duration: 5000,
+    response_ends_trial: false,
+}],
+};
+
+var instructions04 = {
+  type: "html-keyboard-response",
+  stimulus: "<p style='text-align:left'>ご参加ありがとうございます</p>"+
+   "<p style='text-align:left'>　</p>"+
+   "<p style='text-align:left'>スペースキーを押すと実験が終了します</p>"+
+   "<p style='text-align:left'>操作システムがWindows10の場合、「ダウンロード」フォルダーに「mydata_json.json」が作成されます</p>"+
+   "<p style='text-align:left'>↑これがデータです</p>"+
+   "<p style='text-align:left'>　</p>"+
+   "<p style='text-align:left'>お手数ですが、「mydata_json.json」を　hp300020@senshu-u.jp　に送ってください</p>"+
+   "<p style='text-align:left'>スペースキーを押して実験が終了されて、「mydata_json.json」が作成されます</p>"+
+   "<p style='text-align:left'>　</p>"+
+   "<p style='text-align:left'>全画面表示を止めたい場合はEscキーを押してください</p>"+
+   "<p style='text-align:left'>ご不明な点があれば連絡ください</p>",
+    post_trial_gap:1000
+};
+
+/*見せるギャンブル刺激*/
+var choice = function( m ){ 
+   var ssa = m;
+   return   {
+    timeline:[{
+      stimulus: '',
+      type: 'html-button-response',
+      choices: jsPsych.timelineVariable('stimulus'),
+      button_html: '%choice%',
+      trial_duration: 3000*bai,
+      data: jsPsych.timelineVariable('data')
+    },{
+      type: 'html-keyboard-response',
+      stimulus: function(){
+      var last_select = jsPsych.data.get().last(1).values()[0].button_pressed;
+          if (last_select ==1 || last_select ==0 ){
+           return   "<p style='position: absolute; top: 38%;left: 25%'><img src='img/s2.bmp' width='200px'/>"+
+                    "</p><p style='position: absolute; top: 42%;left: 28%;color: whilt;font-size: 45pt;'>"+"￥"+jsPsych.data.get().last(1).values()[0].reward_s01+
+                    "</p><p style='font-size: 48px'>+</p>" 
+         }  else if (last_select >1){
+           return  "<p style='position: absolute; top: 27%;right: 25%'><img src='img/s2.bmp' width='200px'/>"+
+                   "</p><p style='position: absolute; top: 31%;right: 27%;color: whilt;font-size: 45pt;'>"+"￥"+jsPsych.data.get().last(1).values()[0].feedback01+
+                   "</p><p style='position: absolute; top: 48%;right: 25%'><img src='img/s2.bmp' width='200px'/></p>"+
+                   "<p style='position: absolute; top: 53%;right: 27%;color: whilt;font-size: 45pt;'>"+"￥"+jsPsych.data.get().last(1).values()[0].feedback02+
+                   "</p><p style='font-size: 48px'>+</p>"
+         }  else {
+            return "<p style='position: absolute; top: 48%;right: 25%'><img src='img/s2.bmp' width='200px'/></p>"+
+                   "<p style='position: absolute; top: 53%;right: 27%;color: whilt;font-size: 45pt;'>"+"￥"+jsPsych.data.get().last(1).values()[0].feedback02+
+                   "</p><p style='font-size: 48px'>+</p>"
+          }
+        },
+      trial_duration: 6000*bai,
+      response_ends_trial: false, 
+    },{
+      type: 'html-keyboard-response',
+      stimulus: function(){
+        var last_select = jsPsych.data.get().last(2).values()[0].button_pressed;
+        var last_reward_s01 = jsPsych.data.get().last(2).values()[0].reward_s01;
+        var last_reward_s02 = jsPsych.data.get().last(2).values()[0].reward_s02;
+        if (last_select ==1 || last_select ==0){
+           return "<p style='position: absolute; top: 38%;left: 25%'><img src='img/s2.bmp' width='200px'/></p>"+
+                   "<p style='position: absolute; top: 42%;left: 28%;color: whilt;font-size: 45pt;'>"+"￥"+jsPsych.data.get().last(2).values()[0].reward_s01+
+                   "</p><p style='font-size: 48px'>+</p>"  
+         } else if (last_select >1 && last_reward_s02 > last_reward_s01){
+           return  "<p style='position: absolute; top: 27%;right: 25%'><img src='img/s2.bmp' width='200px'/></p>"+
+                   "<p style='position: absolute; top: 31%;right: 27%;color: whilt;font-size: 45pt;'>"+"￥"+jsPsych.data.get().last(2).values()[0].feedback01+"</p>"+
+                   "<p style='font-size: 48px'>+</p>"
+         } else if(last_select >1 && last_reward_s02 < last_reward_s01) {
+           return  "<p style='position: absolute; top: 48%;right: 25%'><img src='img/s2.bmp' width='200px'/></p>"+
+                   "<p style='position: absolute; top: 53%;right: 27%;color: whilt;font-size: 45pt;'>"+"￥"+jsPsych.data.get().last(2).values()[0].feedback02+"</p>"+
+                   "<p style='font-size: 48px'>+</p>"
+         }else {
+           return "<p style='position: absolute; top: 48%;right: 25%'><img src='img/s2.bmp' width='200px'/></p>"+
+                  "<p style='position: absolute; top: 53%;right: 27%;color: whilt;font-size: 45pt;'>"+"￥"+jsPsych.data.get().last(2).values()[0].feedback02+"</p>"+
+                  "<p style='font-size: 48px'>+</p>"
+         }
+        },
+      trial_duration: 1000*bai,
+      response_ends_trial: false,
+    },{
+    　type: 'html-keyboard-response',
+      stimulus: "<p style='font-size: 48px'>+</p>",
+      trial_duration: function() {
+        return listcross[Math.floor(Math.random() * listcross.length)]*1000
+      }*bai,
+      response_ends_trial: false,
+      },
+     
+  ],
+    timeline_variables: stimuli,
+    sample: {
+        type: 'alternate-groups',
+        groups: ssa,  
+        randomize_group_order: false 
+    }
+    
+
+};
+};
+
+
+/*質問する*/
+var choice2 = {
+     timeline:[{ 
+      type: 'html-keyboard-response',
+      stimulus:'<p>今どれくらい楽しいかを教えてください</p>' ,
+      trial_duration: 5000*bai,
+      response_ends_trial: false,
+},
+{
+      type: 'html-slider-response',
+      stimulus:'<p>今どれくらい楽しいかを教えてください</p>',
+      labels: ['とても楽しくない','とても楽しい'] ,
+      trial_duration: 4000*bai,
+      button_label: '確定',
+},{
+    　type: 'html-keyboard-response',
+      stimulus: '<p style="font-size: 48px">+</p>',
+      trial_duration: function() {
+        return listcross[Math.floor(Math.random() * listcross.length)]*1000
+      }*bai,
+      response_ends_trial: false,
+}
+     ],
+    
+};
+
+/*何回「楽しいかい」を聞く,2は2個のchoiseを出す,
+3は個のchoiseを出す,0はchoice2を出る,４は休憩を取る画面
+qlisthはプログラムテストに使う,qlist01は練習課題に使う,qlist02は本番に使う*/
+var qlist = [2,0,3,0,2,0,3,0,3,0];
+var qlist01 = [2,0,2,9];
+var qlist02 = [2, 0, 2, 0, 2, 0, 2, 0, 3, 0,
+               2, 0, 3, 0, 3, 0, 2, 0, 2, 0, 
+               2, 0, 2, 0, 3, 0, 3, 0, 3, 0, 
+               2, 0, 3, 0, 2, 0, 2, 0, 3, 0, 4,
+               2, 0, 3, 0, 3, 0, 2, 0, 2, 0, 
+               3, 0, 3, 0, 2, 0, 3, 0, 3, 0, 
+               2, 0, 3, 0, 2, 0, 2, 0, 2, 0, 
+               2, 0, 3, 0, 2, 0, 2, 0, 2, 0, 
+               2, 0, 3, 0, 2, 0, 2, 0, 2, 0, 4,
+               3, 0, 2, 0, 2, 0, 3, 0, 2, 0, 
+               3, 0, 2, 0, 3, 0, 2, 0, 3, 0, 
+               2, 0, 2, 0, 3, 0, 2, 0, 2, 0, 
+               2, 0, 2, 0, 3, 0];
+
+z = 30;
+
+/* タイムラインの設定 */
+var timeline = [];
+timeline.push(fullscreen);
+timeline.push(instructions00);
+timeline.push(instructions);
+timeline.push(instructions01);
+//ここからは練習課題
+for(var i = 0; i<4; i++){
+  if(qlist01[i] == 2){
+    a = z+1;
+    b = a+1;
+    z = b;
+    mz = [[a],[b]];
+    timeline.push(choice(mz));
+  }else if(qlist01[i] == 3) {
+    a = z+1;
+    b = a+1;
+    c = b+1;
+    z = c;
+    mz = [[a],[b],[c]];
+    timeline.push(choice(mz));
+  }else if (qlist01[i] == 9 ){
+    z = -1;
+    timeline.push(choice2)
+  }else{
+    timeline.push(choice2)
+ }};
+
+//ここまでは練習課題
+timeline.push(instructions02);
+//ここからは本番にする予定、本番は i<(126+休憩回数)
+for(var i = 0; i<128; i++){
+  if(qlist02[i] == 2){ 
+    a = z+1;
+    b = a+1;
+    z = b;
+    mz = [[a],[b]];
+    timeline.push(choice(mz));
+  }else if(qlist02[i] == 3) {
+    a = z+1;
+    b = a+1;
+    c = b+1;
+    z = c;
+    mz = [[a],[b],[c]];
+    timeline.push(choice(mz));
+  }else if(qlist02[i] == 4){
+    timeline.push(instructions03);
+  }else{
+    timeline.push(choice2)
+}};
+//終わりの挨拶
+timeline.push(instructions04);
+
+
+
+/* 課題開始 */
+jsPsych.init({
+  timeline: timeline,
+  on_finish: function() {
+    jsPsych.data.displayData();
+    jsPsych.data.get().localSave('json','mydata_json.json');
+  }
+});
+```
