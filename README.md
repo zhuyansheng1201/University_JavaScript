@@ -1,5 +1,5 @@
 # University_JavaScript
-修論のため、使うWeb実験
+Web実験
 
 ## なぜ作ったのか
 　このプロジェクトは
